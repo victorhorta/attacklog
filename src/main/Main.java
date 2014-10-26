@@ -135,7 +135,7 @@ public class Main {
     		 System.out.println("douvle  " + db.get(db.size() - 1));
     	 }
     	 
-    	 BarChartPlot synFlood = Plots.newBarChartPlot(Data.newData(db),BLUEVIOLET,"Syn Flood");
+    	 BarChartPlot synFlood = Plots.newBarChartPlot(Data.newData(db),BLUEVIOLET,"Syn Package");
     	
     	 BarChart chart = GCharts.newBarChart(synFlood);
     	 
@@ -146,16 +146,15 @@ public class Main {
          AxisLabels horario = AxisLabelsFactory.newAxisLabels("Horário", 50.0);
          horario.setAxisStyle(axisStyle);
          
-         chart.addXAxisLabels(AxisLabelsFactory.newAxisLabels("2002", "2003", "2004", "2005", "2006"));
          chart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, 1600));
          chart.addYAxisLabels(pacotes);
          chart.addXAxisLabels(horario);
 
          chart.setSize(600, 450);
          chart.setBarWidth(5);
-         chart.setSpaceWithinGroupsOfBars(4);
+         chart.setSpaceWithinGroupsOfBars(3);
          chart.setDataStacked(true);
-         chart.setTitle("Syn Flood - NEPTUNE", BLACK, 16);
+         chart.setTitle("Syn Flood - NEPTUNE Interval: " + Range.interval + "s", BLACK, 16);
          chart.setGrid(100, 6.25, 3, 2);
          chart.setBackgroundFill(Fills.newSolidFill(ALICEBLUE));
          LinearGradientFill fill = Fills.newLinearGradientFill(0, LAVENDER, 100);
