@@ -1,11 +1,25 @@
 package main;
 
+import static com.googlecode.charts4j.Color.ALICEBLUE;
+import static com.googlecode.charts4j.Color.BLACK;
+import static com.googlecode.charts4j.Color.BLUEVIOLET;
+import static com.googlecode.charts4j.Color.LAVENDER;
+import static com.googlecode.charts4j.Color.WHITE;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 import org.jnetpcap.ByteBufferHandler;
 import org.jnetpcap.Pcap;
@@ -16,14 +30,12 @@ import org.jnetpcap.packet.PeeringException;
 import org.jnetpcap.protocol.lan.Ethernet;
 import org.jnetpcap.protocol.tcpip.Tcp;
 
-import com.googlecode.charts4j.BarChartPlot;
-import static com.googlecode.charts4j.Color.*;
-
 import com.googlecode.charts4j.AxisLabels;
 import com.googlecode.charts4j.AxisLabelsFactory;
 import com.googlecode.charts4j.AxisStyle;
 import com.googlecode.charts4j.AxisTextAlignment;
 import com.googlecode.charts4j.BarChart;
+import com.googlecode.charts4j.BarChartPlot;
 import com.googlecode.charts4j.Data;
 import com.googlecode.charts4j.Fills;
 import com.googlecode.charts4j.GCharts;
@@ -161,10 +173,25 @@ public class Main {
          fill.addColorAndOffset(WHITE, 0);
          chart.setAreaFill(fill);
          String url = chart.toURLString();
+         
+         JFrame f = new JFrame("Analisando pacotes");
+         
+         f.addWindowListener(new WindowAdapter(){
+                 public void windowClosing(WindowEvent e) {
+                     System.exit(0);
+                 }
+             });
+  
+         f.add(new LoadImage(url));
+         f.pack();
+         f.setVisible(true);
+         
+         
+
          // EXAMPLE CODE END. Use this url string in your web or
          // Internet application.
-         Logger.global.info(url);
-         String expectedString = "http://chart.apis.google.com/chart?chf=bg,s,F0F8FF|c,lg,0,E6E6FA,1.0,FFFFFF,0.0&chs=600x450&chd=e:QAbhHrTN,FIWZHCDN,GaMzTNTN&chtt=Team+Scores&chts=000000,16&chg=100.0,10.0,3,2&chxt=y,y,x,x&chxr=0,0.0,100.0|1,0.0,100.0|3,0.0,100.0&chxl=1:|Score|2:|2002|2003|2004|2005|3:|Year&chxp=1,50.0|3,50.0&chxs=1,000000,13,0|3,000000,13,0&chdl=Team+A|Team+B|Team+C&chco=8A2BE2,FF4500,32CD32&chbh=100,20,8&cht=bvs";
+         //Logger.global.info(url);
+         //String expectedString = "http://chart.apis.google.com/chart?chf=bg,s,F0F8FF|c,lg,0,E6E6FA,1.0,FFFFFF,0.0&chs=600x450&chd=e:QAbhHrTN,FIWZHCDN,GaMzTNTN&chtt=Team+Scores&chts=000000,16&chg=100.0,10.0,3,2&chxt=y,y,x,x&chxr=0,0.0,100.0|1,0.0,100.0|3,0.0,100.0&chxl=1:|Score|2:|2002|2003|2004|2005|3:|Year&chxp=1,50.0|3,50.0&chxs=1,000000,13,0|3,000000,13,0&chdl=Team+A|Team+B|Team+C&chco=8A2BE2,FF4500,32CD32&chbh=100,20,8&cht=bvs";
          //assertEquals("Junit error", normalize(expectedString), normalize(url));
     }
 }
