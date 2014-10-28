@@ -141,10 +141,8 @@ public class Main {
    }
     static void drawChart(){
     	 List<Double> db = new ArrayList<Double>();
-    	 System.out.println(chartData.size());
     	 for(int i = 0 ; i < chartData.size() ; i++ ){
     		 db.add(((double)chartData.get(i).count / 17));
-    		 System.out.println("douvle  " + db.get(db.size() - 1));
     	 }
     	 
     	 BarChartPlot synFlood = Plots.newBarChartPlot(Data.newData(db),BLUEVIOLET,"Syn Package");
@@ -158,7 +156,7 @@ public class Main {
          AxisLabels horario = AxisLabelsFactory.newAxisLabels("Horário", 50.0);
          horario.setAxisStyle(axisStyle);
          
-         chart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, 1600));
+         chart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, 1700));
          chart.addYAxisLabels(pacotes);
          chart.addXAxisLabels(horario);
 
