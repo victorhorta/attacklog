@@ -28,6 +28,7 @@ import org.jnetpcap.nio.JMemory;
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.packet.PeeringException;
 import org.jnetpcap.protocol.lan.Ethernet;
+import org.jnetpcap.protocol.network.Ip4;
 import org.jnetpcap.protocol.tcpip.Tcp;
 
 import com.googlecode.charts4j.AxisLabels;
@@ -51,6 +52,7 @@ public class Main {
     static int packetCount = 0;
     static List<Timestamp> synPackets = new ArrayList<Timestamp>();
     static List<Range> chartData = new ArrayList<Range>();
+    static List<Ip> ips = new ArrayList<Ip>();
     
     //Ip4 ip = new Ip4();
     //Tcp tcp = new Tcp();
@@ -89,21 +91,35 @@ public class Main {
                 packet.scan(Ethernet.ID); // Assuming that first header in packet is ethernet
                 
                 Tcp tcpHeader = packet.getHeader(new Tcp());
-
+                Ip4 ipHeader = packet.getHeader(new Ip4());
+                
+                
+                String ipAttack = "";
                 if(tcpHeader != null) {
                     ++isTCP;
+                    
                     if(initialTime == null){
                     	initialTime = new java.sql.Date(header.timestampInMillis());
                     }
                     if(tcpHeader.flags_SYN()) {
-                        ++isSYN;
+                    	++isSYN;
                         synPackets.add(new Timestamp(header.timestampInMillis()));
-                     //   System.out.println("" + synPackets.get(synPackets.size() - 1).getDay()
-                       // 		+";"+ synPackets.get(synPackets.size() - 1).getMonth()
-                        //		+ ";"+ synPackets.get(synPackets.size() - 1).getYear()
-                        	//	+ " " + synPackets.get(synPackets.size() - 1).getHours()+
-                        	//	 " " + synPackets.get(synPackets.size() - 1).getMinutes()
-                        //		+ " " + synPackets.get(synPackets.size() - 1).getSeconds());
+                        if(ips.size() == 0){
+                        	ips.add(new Ip(org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.source()),org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.destination())));
+                        }else{
+                        	boolean isRepeated = false;
+                        	for(int i = 0 ; i < ips.size();i++){
+                        		//System.out.println(ips.get(i).ipSource + " --- " +org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.source()));
+                        		if(ips.get(i).ipSource.equals(org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.source()))){
+                        			ips.get(i).count = ips.get(i).count + 1;
+                        			//System.out.println("tem repitido");
+                        			isRepeated = true;
+                        		}
+                        	}
+                        	if(!isRepeated){
+                        		ips.add(new Ip(org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.source()),org.jnetpcap.packet.format.FormatUtils.ip(ipHeader.destination())));
+                        	}
+                        }
                     }   
                     finalTime = new java.sql.Date(header.timestampInMillis());
                 }
@@ -116,7 +132,7 @@ public class Main {
           System.out.println("Total: " + packetCount);
           System.out.println("TCP packets: " + isTCP);
           System.out.println("SYN packets: " + isSYN);
-          
+          printAttackDetail();
           System.out.println(initialTime.toLocaleString());
           System.out.println(finalTime.toLocaleString());
           dataProcessing();
@@ -129,6 +145,22 @@ public class Main {
 //    void prepareData(ArrayList<String> labels, ArrayList<>) {
 //        synPackets
 //    }
+    
+    
+   static void printAttackDetail(){
+	   String ipOrigem = "";
+	   String ipDestino = "";
+	   int count = 0;
+	   for(int i = 0 ; i < ips.size();i++){
+		   if(ips.get(i).count > count){
+			   count = ips.get(i).count; 
+			   ipOrigem = ips.get(i).ipSource; 
+			   ipDestino = ips.get(i).ipDestination;
+		   }
+	   }
+	   System.out.println("IP atacante: " + ipOrigem);
+	   System.out.println("IP atacado: " + ipDestino);
+   }
    static void dataProcessing(){
 	   if(chartData.isEmpty()){
 		   chartData.add(new Range(initialTime));
